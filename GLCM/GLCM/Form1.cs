@@ -34,8 +34,12 @@ namespace GLCM
 			InitializeComponent();
 			InitalizeMatrix(startMatrix);
 			Start();
+			//tabBtn[0, 0].Text = GetMaxValue(startMatrix).ToString();
 		}
 
+		/// <summary>
+		/// Renders matrix on first step
+		/// </summary>
 		private void Start()
 		{
 			for (int i = 0; i < MatrixSize; i++)
@@ -52,6 +56,9 @@ namespace GLCM
 					this.Controls.Add(tabBtn[i, j]);
 				}
 			}
+
+			//after we have the needed 
+			//int newMatrixSize
 		}
 
 		private void InitalizeMatrix(int[,] matrix)
@@ -64,6 +71,28 @@ namespace GLCM
 				}
 			}
 		}
+		/// <summary>
+		/// Gets the maximum value of matrix
+		/// </summary>
+		/// <param name="matrix">The Matrix</param>
+		/// <returns>Maximum Value</returns>
+		private int GetMaxValue(int[,] matrix)
+		{
+			int max = 0;
+			for (int i = 0; i < MatrixSize; i++)
+			{
+				for (int j = 0; j < MatrixSize; j++)
+				{
+					if (matrix[i, j] > max)
+					{
+						max = matrix[i, j];
+					}
+				}
+			}
+			return max;
+		}
+
+		
 
 
 	}

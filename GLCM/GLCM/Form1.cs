@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,13 +64,36 @@ namespace GLCM
 
 		private void InitalizeMatrix(int[,] matrix)
 		{
-			for (int i = 0; i < MatrixSize; i++)
-			{
-				for (int j = 0; j < MatrixSize; j++)
-				{
-					matrix[i, j] = i*j;
-				}
-			}
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader("exampleMatrix.txt"))
+                {
+                    bool isInitializedMatrix = false;
+                    string[] tmp;
+                    String line;
+                    // Read the stream to a string, and write the string to the console.
+                    for (int i = 0; i < MatrixSize; i++)
+                    {
+                        line = sr.ReadLine();
+                        tmp = line.Split('\t');
+                        if (isInitializedMatrix)
+                        {
+                            startMatrix = new int[tmp.Length, tmp.Length];
+                            isInitializedMatrix = true;
+                        }
+                        for (int j = 0; j < MatrixSize; j++)
+                        {
+                            matrix[i, j] = int.Parse(tmp[j]);
+                        }
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(e.Message);
+            }
+          
 		}
 		/// <summary>
 		/// Gets the maximum value of matrix

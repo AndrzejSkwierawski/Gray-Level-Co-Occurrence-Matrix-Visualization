@@ -157,7 +157,7 @@ namespace GLCM
                         }
                         for (int j = 0; j < MatrixSize; j++)
                         {
-                            matrix[i, j] = int.Parse(tmp[j]);
+                            matrix[j, i] = int.Parse(tmp[j]);
                         }
                     }
                 }
@@ -198,6 +198,7 @@ namespace GLCM
 				{
 					outputMatrix[i,j] =  SearchForOccurance(inputMatrix, j, i);
 					transpozedOutputMatrix[i, j] = SearchForOccurance(inputMatrix, i, j);
+
 				}
 			}
 		}
@@ -205,13 +206,13 @@ namespace GLCM
 		private int SearchForOccurance(int[,] inputMatrix, int x, int y)
 		{
 			int count = 0;
-			for (int i = 0; i < MatrixSize; i++)
+			for (int i = 0; i < MatrixSize-1; i++)
 			{
-				for (int j = 0; j < MatrixSize-1; j++)
+				for (int j = 0; j < MatrixSize; j++)
 				{
 					if (inputMatrix[i,j] == x)
 					{
-						if (inputMatrix[i, j+1] == y)
+						if (inputMatrix[i+1, j] == y)
 						{
 							count++;
 						}

@@ -12,44 +12,59 @@ namespace GLCM
 {
 	public partial class Form1 : Form
 	{
-		int[,] startMatrix = new int[4, 4];
-		int[,] changeMatrix = new int[4, 4];
-		int[,] transponedMatrix = new int[4, 4];
-		int[,] addedMatrix = new int[4, 4];
+		public const int MatrixSize = 4;
 
-		int sume;
+		private int cellSize = 20;
+		private int startMatrixPosX = 21;
+		private int startMatrixPosY = 21;
 
-		double[,] devidedMatrix = new double[4, 4];
 
-		Button[,] tabBtn;
+		int[,] startMatrix = new int[MatrixSize, MatrixSize];
+		int[,] changeMatrix = new int[MatrixSize, MatrixSize];
+		int[,] transponedMatrix = new int[MatrixSize, MatrixSize];
+		int[,] addedMatrix = new int[MatrixSize, MatrixSize];
+
+		private int sum;
+
+		private double[,] devidedMatrix = new double[MatrixSize, MatrixSize];
+		private Button[,] tabBtn  = new Button[MatrixSize, MatrixSize];
+
 		public Form1()
 		{
 			InitializeComponent();
-			for (int i = 0; i < 4; i++)
-			{
-				for (int j = 0; j < 4; j++)
-				{
-					startMatrix[i, j] = 1;
-				}
-			}
+			InitalizeStartMatrix();
+			Start();
+		}
 
-
-			tabBtn = new Button[4, 4];
-			for (int i = 0; i < 4; i++)
+		private void Start()
+		{
+			for (int i = 0; i < MatrixSize; i++)
 			{
-				for (int j = 0; j < 4; j++)
+				for (int j = 0; j < MatrixSize; j++)
 				{
 					tabBtn[i, j] = new Button();
-					//tabBtn[i, j].SetBounds(31+20*i,31+20*j,20,20);
 					tabBtn[i, j].Enabled = false;
 					tabBtn[i, j].BackColor = Color.White;
-					tabBtn[i, j].Location = new Point(21 + 20 * i, 21 + 20 * j);
-					tabBtn[i, j].Size = new Size(20, 20);
+					tabBtn[i, j].Location = new Point(startMatrixPosX + cellSize * i, startMatrixPosY + cellSize * j);
+					tabBtn[i, j].Size = new Size(cellSize, cellSize);
 					tabBtn[i, j].Visible = true;
 					tabBtn[i, j].Text = startMatrix[i, j].ToString();
 					this.Controls.Add(tabBtn[i, j]);
 				}
 			}
 		}
+
+		private void InitalizeStartMatrix()
+		{
+			for (int i = 0; i < MatrixSize; i++)
+			{
+				for (int j = 0; j < MatrixSize; j++)
+				{
+					startMatrix[i, j] = 1;
+				}
+			}
+		}
+
+
 	}
 }

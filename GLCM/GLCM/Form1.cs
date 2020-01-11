@@ -32,7 +32,7 @@ namespace GLCM
 		public Form1()
 		{
 			InitializeComponent();
-			InitalizeStartMatrix();
+			InitalizeMatrix(startMatrix);
 			Start();
 		}
 
@@ -54,13 +54,13 @@ namespace GLCM
 			}
 		}
 
-		private void InitalizeStartMatrix()
+		private void InitalizeMatrix(int[,] matrix)
 		{
 			for (int i = 0; i < MatrixSize; i++)
 			{
 				for (int j = 0; j < MatrixSize; j++)
 				{
-					startMatrix[i, j] = 1;
+					matrix[i, j] = i*j;
 				}
 			}
 		}

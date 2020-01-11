@@ -21,9 +21,9 @@ namespace GLCM
 
 
 		int[,] startMatrix = new int[MatrixSize, MatrixSize];
-		int[,] changeMatrix = new int[MatrixSize, MatrixSize];
-		int[,] transponedMatrix = new int[MatrixSize, MatrixSize];
-		int[,] addedMatrix = new int[MatrixSize, MatrixSize];
+		//int[,] changeMatrix = new int[MatrixSize, MatrixSize];
+		//int[,] transponedMatrix = new int[MatrixSize, MatrixSize];
+		//int[,] addedMatrix = new int[MatrixSize, MatrixSize];
 
 		private int sum;
 
@@ -59,7 +59,10 @@ namespace GLCM
 			}
 
 			//after we have the needed 
-			//int newMatrixSize
+			int newMatrixSize = GetMaxValue(startMatrix);
+			int[,] changeMatrix = new int[newMatrixSize, newMatrixSize];
+			int[,] transponedMatrix = new int[newMatrixSize, newMatrixSize];
+			int[,] addedMatrix = new int[newMatrixSize, newMatrixSize];
 		}
 
 		private void InitalizeMatrix(int[,] matrix)

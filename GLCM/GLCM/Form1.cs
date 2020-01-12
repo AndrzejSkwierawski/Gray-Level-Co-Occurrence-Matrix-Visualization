@@ -13,10 +13,10 @@ namespace GLCM
 {
     public partial class Form1 : Form
     {
-        int delllay = 5;
+        private int delllay = 50;
         private int cellSize = 40;
-        private int startMatrixPosX = 20;
-        private int startMatrixPosY = 20;
+        private int startMatrixPosX = 30;
+        private int startMatrixPosY = 30;
         int MatrixSize;
         List<List<int>> startMatrix = new List<List<int>>();
         Button[,] tabBtn;
@@ -27,15 +27,23 @@ namespace GLCM
 
         Button sum;
         Button sumFinal;
-        
+		private string fileName = "exampleMatrix.txt";
 
-        public Form1()
+		public Form1()
         {
             InitializeComponent();
-            InitalizeMatrix(startMatrix);
-            Start();
-           
-       }
+			startToolStripMenuItem.Enabled = false;
+		}
+
+		private void OpenFile()
+		{
+			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				fileName = openFileDialog1.FileName;
+				InitalizeMatrix(startMatrix);
+				Start();
+			}
+		}
 
         /// <summary>
 		/// Renders matrix on first step
@@ -66,6 +74,7 @@ namespace GLCM
                 }
             }
 
+			startToolStripMenuItem.Enabled = true;
         }
 
         private void viewMatrix(Button[,] tabBtn2, int posX, int posY)
@@ -107,7 +116,7 @@ namespace GLCM
         {
             try
             {   // Open the text file using a stream reader.
-                using (StreamReader sr = new StreamReader("exampleMatrix.txt"))
+                using (StreamReader sr = new StreamReader(fileName))
                 {
 
                     string[] tmp;
@@ -322,25 +331,47 @@ namespace GLCM
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            viewMatrix(changeMatrix, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY);
-            countOccurance(tabBtn, changeMatrix);
-            viewMatrix(transponedMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY);
-            transpozeMatrix(changeMatrix, transponedMatrix);
-            viewMatrix(addedMatrix, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY + cellSize * (MatrixSize + 1));
-            sumMatrix(changeMatrix, transponedMatrix, addedMatrix);
-            
-            //todo: display sum
-            viewText(ref sum, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 1));
-            sumCount(addedMatrix,ref sum);
-            viewMatrix(finalMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY + cellSize * (MatrixSize + 1));
-            devideMatrix(addedMatrix, sum, finalMatrix);
-            //todo: display sumFinal
-            viewText(ref sumFinal, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 2));
-            sumFinalCount(finalMatrix, ref sumFinal);
-        }
-    }
+		private void openToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenFile();
+		}
+
+		private void demoToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			InitalizeMatrix(startMatrix);
+			Start();
+		}
+
+		private void startToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			startToolStripMenuItem.Enabled = false;
+			demoToolStripMenuItem.Enabled = false;
+			openToolStripMenuItem.Enabled = false;
+			viewMatrix(changeMatrix, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY);
+			countOccurance(tabBtn, changeMatrix);
+			viewMatrix(transponedMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY);
+			transpozeMatrix(changeMatrix, transponedMatrix);
+			viewMatrix(addedMatrix, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY + cellSize * (MatrixSize + 1));
+			sumMatrix(changeMatrix, transponedMatrix, addedMatrix);
+
+			viewText(ref sum, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 1));
+			sumCount(addedMatrix, ref sum);
+			viewMatrix(finalMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY + cellSize * (MatrixSize + 1));
+			devideMatrix(addedMatrix, sum, finalMatrix);
+
+			viewText(ref sumFinal, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 2));
+			sumFinalCount(finalMatrix, ref sumFinal);
+		}
+
+		private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			const string message = " Andrzej Skwierawski,\n Michał Woźniak,\n Maciej Khuat Cao";
+			const string caption = "Copyright ©. All right reserved. ";
+			var result = MessageBox.Show(message, caption,
+										 MessageBoxButtons.OK,
+										 MessageBoxIcon.Information);
+		}
+	}
 }
 
 

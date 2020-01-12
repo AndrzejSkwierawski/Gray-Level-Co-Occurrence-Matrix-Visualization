@@ -37,8 +37,12 @@ namespace GLCM
 			startToolStripMenuItem.Enabled = false;
 		}
 
+		/// <summary>
+		/// Selects the file whitch will be written
+		/// </summary>
 		private void OpenFile()
 		{
+			this.openFileDialog1.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
 			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
 				fileName = openFileDialog1.FileName;
@@ -79,7 +83,13 @@ namespace GLCM
 			startToolStripMenuItem.Enabled = true;
         }
 
-        private void viewMatrix(Button[,] tabBtn2, int posX, int posY)
+		/// <summary>
+		/// ViewMatrix
+		/// </summary>
+		/// <param name="matrix">The Matrix</param>
+		/// <param name="posX">Start position x</param>
+		/// <param name="posY">Start position y</param>
+		private void viewMatrix(Button[,] matrix, int posX, int posY)
         {
             int size = GetMaxValue(startMatrix) ;
 
@@ -87,33 +97,44 @@ namespace GLCM
             {
                 for (int j = 0; j < size; j++)
                 {
-                    tabBtn2[i, j] = new Button();
-                    tabBtn2[i, j].Enabled = false;
-                    tabBtn2[i, j].BackColor = Color.White;
-                    tabBtn2[i, j].Location = new Point(posX + cellSize * i, posY + cellSize * j);
-                    tabBtn2[i, j].Size = new Size(cellSize, cellSize);
-                    tabBtn2[i, j].Visible = true;
-                    tabBtn2[i, j].Text = "0";
-                    this.Controls.Add(tabBtn2[i, j]);
+                    matrix[i, j] = new Button();
+                    matrix[i, j].Enabled = false;
+                    matrix[i, j].BackColor = Color.White;
+                    matrix[i, j].Location = new Point(posX + cellSize * i, posY + cellSize * j);
+                    matrix[i, j].Size = new Size(cellSize, cellSize);
+                    matrix[i, j].Visible = true;
+                    matrix[i, j].Text = "0";
+                    this.Controls.Add(matrix[i, j]);
                     this.Refresh();
                 }
             }
         }
 
-        private void viewText(ref Button tabBtn, string text, int posX, int posY)
+		/// <summary>
+		/// Views text in one field
+		/// </summary>
+		/// <param name="field">Field</param>
+		/// <param name="text">Content</param>
+		/// <param name="posX">Start posiotion x</param>
+		/// <param name="posY">Start posiotion y</param>
+		private void viewText(ref Button field, string text, int posX, int posY)
         {
             int size = GetMaxValue(startMatrix);
 
-            tabBtn = new Button();
-            tabBtn.Enabled = false;
-            tabBtn.BackColor = Color.White;
-            tabBtn.Location = new Point(posX + cellSize, posY + cellSize);
-            tabBtn.Size = new Size(cellSize * 2, cellSize);
-            tabBtn.Visible = true;
-            tabBtn.Text = text;
-            this.Controls.Add(tabBtn);
+            field = new Button();
+            field.Enabled = false;
+            field.BackColor = Color.White;
+            field.Location = new Point(posX + cellSize, posY + cellSize);
+            field.Size = new Size(cellSize * 2, cellSize);
+            field.Visible = true;
+            field.Text = text;
+            this.Controls.Add(field);
         }
 
+		/// <summary>
+		/// Gets the values from choosen file.
+		/// </summary>
+		/// <param name="matrix">The Matrix</param>
         private void InitalizeMatrix(List<List<int>> matrix)
         {
             try
@@ -183,7 +204,12 @@ namespace GLCM
             return max + 1;
         }
 
-        private void countOccurance(Button[,] inputMatrix, Button[,] outputMatrix)
+		/// <summary>
+		/// Counts all occurances in inputMatrix and sets those values in outputMatrix
+		/// </summary>
+		/// <param name="inputMatrix">Input Matrix</param>
+		/// <param name="outputMatrix">Output Matrix</param>
+		private void countOccurance(Button[,] inputMatrix, Button[,] outputMatrix)
         {
             for (int i = 0; i < MatrixSize; i++)
             {
@@ -194,13 +220,19 @@ namespace GLCM
                    this.Refresh();
                     System.Threading.Thread.Sleep(dellay);
                     outputMatrix[i, j].BackColor = Color.White;
-                    
                 }
             }
            
         }
 
-        private int SearchForOccurance(Button[,] inputMatrix, int x, int y)
+		/// <summary>
+		/// Searches for occurance in given matrix
+		/// </summary>
+		/// <param name="inputMatrix">The Matrix</param>
+		/// <param name="x">Occurance from values</param>
+		/// <param name="y">Occurance to values</param>
+		/// <returns>Total amound of occurances in given matrix</returns>
+		private int SearchForOccurance(Button[,] inputMatrix, int x, int y)
         {
             int count = 0;
             Console.WriteLine("X=" + inputMatrix.GetLength(0) + " Y=" + inputMatrix.GetLength(1));
@@ -227,14 +259,17 @@ namespace GLCM
             return count;
         }
 
-        private void transpozeMatrix(Button[,] inputMatrix, Button[,] transpozedOutputMatrix)
+		/// <summary>
+		/// Transpozes given matrix
+		/// </summary>
+		/// <param name="inputMatrix">Input Matrix</param>
+		/// <param name="transpozedOutputMatrix">Transpozed Matrix</param>
+		private void transpozeMatrix(Button[,] inputMatrix, Button[,] transpozedOutputMatrix)
         {
             for (int i = 0; i < MatrixSize; i++)
             {
                 for (int j = 0; j < MatrixSize; j++)
                 {
-                   
-                   
                     inputMatrix[j, i].BackColor = Color.Yellow;
                     transponedMatrix[i, j].Text = inputMatrix[j, i].Text;
                     transponedMatrix[i, j].BackColor = Color.Orange;
@@ -243,14 +278,19 @@ namespace GLCM
                     inputMatrix[j, i].BackColor = Color.White;
                     transponedMatrix[i, j].BackColor = Color.White;
                     this.Refresh();
-
                 }
                 this.Refresh();
                 System.Threading.Thread.Sleep(dellay);
             }
         }
 
-        private void sumMatrix(Button[,] input1, Button[,] input2, Button[,] output)
+		/// <summary>
+		/// Sums all values in given matrixes.
+		/// </summary>
+		/// <param name="input1">Matrix1</param>
+		/// <param name="input2">Matrix2</param>
+		/// <param name="output">Sum of two matrixes</param>
+		private void sumMatrix(Button[,] input1, Button[,] input2, Button[,] output)
         {
             int size = GetMaxValue(startMatrix);
             
@@ -384,7 +424,6 @@ namespace GLCM
 		{
 			var speed = speedBar.Value;
 			return maxDellay - speed * minDellay * 10;
-			
 		}
 	}
 }

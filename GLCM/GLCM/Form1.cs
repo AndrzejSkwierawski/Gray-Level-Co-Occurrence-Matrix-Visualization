@@ -13,7 +13,9 @@ namespace GLCM
 {
     public partial class Form1 : Form
     {
-        private int delllay = 50;
+		private int maxDellay = 3000;
+		private int minDellay = 3;
+        private int dellay = 50;
         private int cellSize = 40;
         private int startMatrixPosX = 30;
         private int startMatrixPosY = 30;
@@ -190,7 +192,7 @@ namespace GLCM
                     outputMatrix[i, j].BackColor = Color.Gray;
                     outputMatrix[i, j].Text = SearchForOccurance(inputMatrix, j, i).ToString();
                    this.Refresh();
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
                     outputMatrix[i, j].BackColor = Color.White;
                     
                 }
@@ -215,7 +217,7 @@ namespace GLCM
                             inputMatrix[i, j].BackColor = Color.Green;
                             inputMatrix[i+1, j].BackColor = Color.Green;
                             this.Refresh();
-                            System.Threading.Thread.Sleep(delllay);
+                            System.Threading.Thread.Sleep(dellay);
                             inputMatrix[i, j].BackColor = Color.White;
                             inputMatrix[i+1, j].BackColor = Color.White;
                         }
@@ -237,14 +239,14 @@ namespace GLCM
                     transponedMatrix[i, j].Text = inputMatrix[j, i].Text;
                     transponedMatrix[i, j].BackColor = Color.Orange;
                     this.Refresh();
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
                     inputMatrix[j, i].BackColor = Color.White;
                     transponedMatrix[i, j].BackColor = Color.White;
                     this.Refresh();
 
                 }
                 this.Refresh();
-                System.Threading.Thread.Sleep(delllay);
+                System.Threading.Thread.Sleep(dellay);
             }
         }
 
@@ -256,13 +258,13 @@ namespace GLCM
             {
                 for (int j = 0; j < size; j++)
                 {
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
                     input1[i, j].BackColor = Color.Yellow;
                     input2[i, j].BackColor = Color.Yellow;
                     output[i, j].BackColor = Color.Green;
                     output[i, j].Text = (int.Parse(input1[i, j].Text) + int.Parse(input2[i, j].Text)).ToString();
                     this.Refresh();
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
                     input1[i, j].BackColor = Color.White;
                     input2[i, j].BackColor = Color.White;
                     output[i, j].BackColor = Color.White;
@@ -279,13 +281,13 @@ namespace GLCM
             {
                 for (int j = 0; j < size; j++)
                 {
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
                     input[i, j].BackColor = Color.Yellow;
                     output.BackColor = Color.Gray;
                     sum += int.Parse(input[i, j].Text);
                     output.Text =  sum.ToString();
                     this.Refresh();
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
 
                     input[i, j].BackColor = Color.White;
                     output.BackColor = Color.White;
@@ -316,13 +318,13 @@ namespace GLCM
             {
                 for (int j = 0; j < size; j++)
                 {
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
                     input[i, j].BackColor = Color.Yellow;
                     output.BackColor = Color.Gray;
                     sum += double.Parse(input[i, j].Text);
                     output.Text = sum.ToString();
                     this.Refresh();
-                    System.Threading.Thread.Sleep(delllay);
+                    System.Threading.Thread.Sleep(dellay);
 
                     input[i, j].BackColor = Color.White;
                     output.BackColor = Color.White;
@@ -344,6 +346,7 @@ namespace GLCM
 
 		private void startToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			dellay = getDelay();
 			startToolStripMenuItem.Enabled = false;
 			demoToolStripMenuItem.Enabled = false;
 			openToolStripMenuItem.Enabled = false;
@@ -370,6 +373,18 @@ namespace GLCM
 			var result = MessageBox.Show(message, caption,
 										 MessageBoxButtons.OK,
 										 MessageBoxIcon.Information);
+		}
+
+		private void speedBar_Scroll(object sender, EventArgs e)
+		{
+			dellay = getDelay();
+		}
+
+		private int getDelay()
+		{
+			var speed = speedBar.Value;
+			return maxDellay - speed * minDellay * 10;
+			
 		}
 	}
 }

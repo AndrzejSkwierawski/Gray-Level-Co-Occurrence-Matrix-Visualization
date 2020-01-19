@@ -36,8 +36,10 @@
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.speedBar = new System.Windows.Forms.TrackBar();
 			this.Speed = new System.Windows.Forms.Label();
+			this.NoL = new System.Windows.Forms.NumericUpDown();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.speedBar)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.NoL)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -49,7 +51,7 @@
             this.helpToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(822, 24);
+			this.menuStrip1.Size = new System.Drawing.Size(1205, 24);
 			this.menuStrip1.TabIndex = 1;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -87,7 +89,7 @@
 			// 
 			// speedBar
 			// 
-			this.speedBar.Location = new System.Drawing.Point(606, 530);
+			this.speedBar.Location = new System.Drawing.Point(977, 526);
 			this.speedBar.Maximum = 100;
 			this.speedBar.Name = "speedBar";
 			this.speedBar.Size = new System.Drawing.Size(216, 45);
@@ -99,17 +101,43 @@
 			// Speed
 			// 
 			this.Speed.AutoSize = true;
-			this.Speed.Location = new System.Drawing.Point(603, 514);
+			this.Speed.Location = new System.Drawing.Point(974, 510);
 			this.Speed.Name = "Speed";
 			this.Speed.Size = new System.Drawing.Size(41, 13);
 			this.Speed.TabIndex = 3;
 			this.Speed.Text = "Speed:";
 			// 
+			// NoL
+			// 
+			this.NoL.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+			this.NoL.Location = new System.Drawing.Point(12, 27);
+			this.NoL.Maximum = new decimal(new int[] {
+            6,
+            0,
+            0,
+            0});
+			this.NoL.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+			this.NoL.Name = "NoL";
+			this.NoL.Size = new System.Drawing.Size(40, 23);
+			this.NoL.TabIndex = 7;
+			this.NoL.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.NoL.Value = new decimal(new int[] {
+            4,
+            0,
+            0,
+            0});
+			this.NoL.ValueChanged += new System.EventHandler(this.NoL_ValueChanged);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(822, 574);
+			this.ClientSize = new System.Drawing.Size(1205, 574);
+			this.Controls.Add(this.NoL);
 			this.Controls.Add(this.Speed);
 			this.Controls.Add(this.speedBar);
 			this.Controls.Add(this.menuStrip1);
@@ -119,6 +147,7 @@
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.speedBar)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.NoL)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -133,6 +162,7 @@
 		private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 		private System.Windows.Forms.TrackBar speedBar;
 		private System.Windows.Forms.Label Speed;
+		private System.Windows.Forms.NumericUpDown NoL;
 	}
 }
 

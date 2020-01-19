@@ -17,24 +17,32 @@ namespace GLCM
 		private int minDellay = 3;
         private int dellay = 50;
         private int cellSize = 40;
-        private int startMatrixPosX = 30;
-        private int startMatrixPosY = 30;
-        int MatrixSize;
-        List<List<int>> startMatrix = new List<List<int>>();
+        private int startMatrixPosX = 50;
+        private int startMatrixPosY = 50;
+        private int MatrixSize;
+		private int numberOfLevels;
+		private double resolution;
+		List<List<int>> startMatrix = new List<List<int>>();
+        Button[,] dataMatrix;
         Button[,] tabBtn;
-        Button[,] changeMatrix;
+		Button[,] changeMatrix;
         Button[,] transponedMatrix;
         Button[,] addedMatrix;
         Button[,] finalMatrix;
 
         Button sum;
         Button sumFinal;
-		private string fileName = "exampleMatrix.txt";
+		private string fileName = "exampleMatrix3.txt";
+
+		private double maxPixelValue = 255.0; 
 
 		public Form1()
         {
             InitializeComponent();
 			startToolStripMenuItem.Enabled = false;
+			this.numberOfLevels = Convert.ToInt16(NoL.Value);
+			resolution = maxPixelValue / (this.numberOfLevels - 1);
+
 		}
 
 		/// <summary>
@@ -64,24 +72,41 @@ namespace GLCM
             }
 
             Console.WriteLine(sizeListX + "  " + sizeListY);
-            tabBtn = new Button[sizeListX, sizeListY];
+			dataMatrix = new Button[sizeListX, sizeListY];
             for (int i = 0; i < sizeListX; i++)
             {
                 for (int j = 0; j < sizeListY; j++)
                 {
-                    tabBtn[i, j] = new Button();
-                    tabBtn[i, j].Enabled = false;
-                    tabBtn[i, j].BackColor = Color.White;
-                    tabBtn[i, j].Location = new Point(startMatrixPosX + cellSize * i, startMatrixPosY + cellSize * j);
-                    tabBtn[i, j].Size = new Size(cellSize, cellSize);
-                    tabBtn[i, j].Visible = true;
-                    tabBtn[i, j].Text = startMatrix[j][i].ToString();
-                    this.Controls.Add(tabBtn[i, j]);
+					dataMatrix[i, j] = new Button();
+					dataMatrix[i, j].Enabled = false;
+					dataMatrix[i, j].BackColor = Color.White;
+					dataMatrix[i, j].Location = new Point(startMatrixPosX + cellSize * i, startMatrixPosY + cellSize * j);
+					dataMatrix[i, j].Size = new Size(cellSize, cellSize);
+					dataMatrix[i, j].Visible = true;
+					dataMatrix[i, j].Text = startMatrix[j][i].ToString();
+                    this.Controls.Add(dataMatrix[i, j]);
                 }
             }
-
+			tabBtn = new Button[dataMatrix.GetLength(0), dataMatrix.GetLength(1)];
 			startToolStripMenuItem.Enabled = true;
         }
+
+		private void ConvertToLevels()
+		{
+			int sizeX = startMatrix.Count;
+			int sizeY = startMatrix[0].Count;
+			for (int i = 0; i < sizeX; i++)
+			{
+				for(int j = 0; j < sizeY; j++)
+				{
+					tabBtn[i, j].BackColor = Color.Gray;
+					tabBtn[i, j].Text = Convert.ToInt16((Convert.ToInt16(dataMatrix[i, j].Text) / this.resolution)).ToString();
+					this.Refresh();
+					System.Threading.Thread.Sleep(dellay);
+					tabBtn[i, j].BackColor = Color.White;
+				}
+			}
+		}
 
 		/// <summary>
 		/// ViewMatrix
@@ -89,13 +114,24 @@ namespace GLCM
 		/// <param name="matrix">The Matrix</param>
 		/// <param name="posX">Start position x</param>
 		/// <param name="posY">Start position y</param>
-		private void viewMatrix(Button[,] matrix, int posX, int posY)
+		private void viewMatrix(Button[,] matrix, int posX, int posY, bool origin = false)
         {
-            int size = GetMaxValue(startMatrix) ;
+			int sizeX;
+			int sizeY;
 
-            for (int i = 0; i < size; i++)
+			if (origin)
+			{
+				sizeX = startMatrix.Count;
+				sizeY = startMatrix[0].Count;
+			}
+			else
+			{
+				sizeX = this.numberOfLevels;
+				sizeY = sizeX;
+			}
+			for (int i = 0; i < sizeX; i++)
             {
-                for (int j = 0; j < size; j++)
+                for (int j = 0; j < sizeY; j++)
                 {
                     matrix[i, j] = new Button();
                     matrix[i, j].Enabled = false;
@@ -167,8 +203,9 @@ namespace GLCM
                 Console.WriteLine("The file could not be read:");
                 Console.WriteLine(e.Message);
             }
-            MatrixSize = GetMaxValue(startMatrix);
-            changeMatrix = new Button[MatrixSize, MatrixSize];
+
+            MatrixSize = this.numberOfLevels;
+			changeMatrix = new Button[MatrixSize, MatrixSize];
             transponedMatrix = new Button[MatrixSize, MatrixSize];
             addedMatrix = new Button[MatrixSize, MatrixSize];
             finalMatrix = new Button[MatrixSize, MatrixSize];
@@ -241,7 +278,7 @@ namespace GLCM
             {
                 for (int j = 0; j < inputMatrix.GetLength(1); j++)
                 {
-                    if (int.Parse(inputMatrix[i, j].Text) == x)
+                    if (Convert.ToInt16(inputMatrix[i, j].Text) == x)
                     {
                         if (int.Parse(inputMatrix[i + 1, j].Text) == y)
                         {
@@ -292,7 +329,8 @@ namespace GLCM
 		/// <param name="output">Sum of two matrixes</param>
 		private void sumMatrix(Button[,] input1, Button[,] input2, Button[,] output)
         {
-            int size = GetMaxValue(startMatrix);
+			//int size = GetMaxValue(startMatrix);
+			int size = this.numberOfLevels;
             
             for (int i = 0; i < size; i++)
             {
@@ -315,8 +353,9 @@ namespace GLCM
 
         private void sumCount(Button[,] input, ref Button output)
         {
-            int size = GetMaxValue(startMatrix);
-            int sum = 0;
+			//int size = GetMaxValue(startMatrix);
+			int size = this.numberOfLevels;
+			int sum = 0;
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -338,8 +377,9 @@ namespace GLCM
 
         private void devideMatrix(Button[,] input, Button devider, Button[,] output)
         {
-            int size = GetMaxValue(startMatrix);
-            double sum = 0;
+			//int size = GetMaxValue(startMatrix);
+			int size = this.numberOfLevels;
+			double sum = 0;
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -352,8 +392,9 @@ namespace GLCM
 
         private void sumFinalCount(Button[,] input, ref Button output)
         {
-            int size = GetMaxValue(startMatrix);
-            double sum = 0;
+			//int size = GetMaxValue(startMatrix);
+			int size = this.numberOfLevels;
+			double sum = 0;
             for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
@@ -390,9 +431,13 @@ namespace GLCM
 			startToolStripMenuItem.Enabled = false;
 			demoToolStripMenuItem.Enabled = false;
 			openToolStripMenuItem.Enabled = false;
-			viewMatrix(changeMatrix, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY);
+
+			viewMatrix(tabBtn, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY, true);
+			ConvertToLevels();
+
+			viewMatrix(changeMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY);
 			countOccurance(tabBtn, changeMatrix);
-			viewMatrix(transponedMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY);
+			viewMatrix(transponedMatrix, startMatrixPosX + cellSize * (MatrixSize * 3 + 3), startMatrixPosY);
 			transpozeMatrix(changeMatrix, transponedMatrix);
 			viewMatrix(addedMatrix, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY + cellSize * (MatrixSize + 1));
 			sumMatrix(changeMatrix, transponedMatrix, addedMatrix);
@@ -408,11 +453,12 @@ namespace GLCM
 
 		private void helpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			const string message = " Andrzej Skwierawski,\n Michał Woźniak,\n Maciej Khuat Cao";
+			const string message = " Andrzej Skwierawski,\n Michał Woźniak";
 			const string caption = "Copyright ©. All right reserved. ";
 			var result = MessageBox.Show(message, caption,
 										 MessageBoxButtons.OK,
 										 MessageBoxIcon.Information);
+
 		}
 
 		private void speedBar_Scroll(object sender, EventArgs e)
@@ -424,6 +470,12 @@ namespace GLCM
 		{
 			var speed = speedBar.Value;
 			return maxDellay - speed * minDellay * 10;
+		}
+
+		private void NoL_ValueChanged(object sender, EventArgs e)
+		{
+			this.numberOfLevels = Convert.ToInt16(NoL.Value);
+			resolution = maxPixelValue / (this.numberOfLevels - 1);
 		}
 	}
 }

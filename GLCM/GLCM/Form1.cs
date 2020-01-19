@@ -32,7 +32,7 @@ namespace GLCM
 
         Button sum;
         Button sumFinal;
-		private string fileName = "exampleMatrix3.txt";
+		private string fileName;
 
 		private double maxPixelValue = 255.0; 
 
@@ -45,6 +45,14 @@ namespace GLCM
 
 		}
 
+		private void demoToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			fileName = "exampleMatrix.txt";
+			clearAll();
+			InitalizeMatrix(startMatrix);
+			Start();
+		}
+
 		/// <summary>
 		/// Selects the file whitch will be written
 		/// </summary>
@@ -53,13 +61,39 @@ namespace GLCM
 			this.openFileDialog1.InitialDirectory = Path.GetDirectoryName(Application.ExecutablePath);
 			if (this.openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
+				clearAll();
+				this.Refresh();
 				fileName = openFileDialog1.FileName;
 				InitalizeMatrix(startMatrix);
 				Start();
 			}
 		}
 
-        /// <summary>
+		private void ClearMatrix(Button[,] matrix)
+		{
+			if (matrix != null)
+			{
+				int sizeX = matrix.GetLength(0);
+				int sizeY = matrix.GetLength(1);
+				for (int i = 0; i < sizeX; i++)
+				{
+					for (int j = 0; j < sizeY; j++)
+					{
+						this.Controls.Remove(matrix[i, j]);
+					}
+				}
+			}
+		}
+
+		private void ClearText(Button text)
+		{
+			if (text != null)
+			{
+				this.Controls.Remove(text);
+			}
+		}
+
+		/// <summary>
 		/// Renders matrix on first step
 		/// </summary>
 		private void Start()
@@ -155,8 +189,6 @@ namespace GLCM
 		/// <param name="posY">Start posiotion y</param>
 		private void viewText(ref Button field, string text, int posX, int posY)
         {
-            int size = GetMaxValue(startMatrix);
-
             field = new Button();
             field.Enabled = false;
             field.BackColor = Color.White;
@@ -177,7 +209,6 @@ namespace GLCM
             {   // Open the text file using a stream reader.
                 using (StreamReader sr = new StreamReader(fileName))
                 {
-
                     string[] tmp;
                     List<int> tmpList;
                     int i = 0;
@@ -419,18 +450,14 @@ namespace GLCM
 			OpenFile();
 		}
 
-		private void demoToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			InitalizeMatrix(startMatrix);
-			Start();
-		}
-
 		private void startToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			dellay = getDelay();
 			startToolStripMenuItem.Enabled = false;
 			demoToolStripMenuItem.Enabled = false;
 			openToolStripMenuItem.Enabled = false;
+
+			clearAll(false);
 
 			viewMatrix(tabBtn, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY, true);
 			ConvertToLevels();
@@ -449,6 +476,11 @@ namespace GLCM
 
 			viewText(ref sumFinal, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 2));
 			sumFinalCount(finalMatrix, ref sumFinal);
+
+			startToolStripMenuItem.Enabled = true;
+			demoToolStripMenuItem.Enabled = true;
+			openToolStripMenuItem.Enabled = true;
+
 		}
 
 		private void helpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -476,6 +508,29 @@ namespace GLCM
 		{
 			this.numberOfLevels = Convert.ToInt16(NoL.Value);
 			resolution = maxPixelValue / (this.numberOfLevels - 1);
+			clearAll(false);
+			MatrixSize = this.numberOfLevels;
+			changeMatrix = new Button[MatrixSize, MatrixSize];
+			transponedMatrix = new Button[MatrixSize, MatrixSize];
+			addedMatrix = new Button[MatrixSize, MatrixSize];
+			finalMatrix = new Button[MatrixSize, MatrixSize];
+		}
+
+		private void clearAll(bool origin = true)
+		{
+			if (origin)
+			{
+				startMatrix.Clear();
+				ClearMatrix(dataMatrix);
+			}
+			ClearMatrix(tabBtn);
+			ClearMatrix(changeMatrix);
+			ClearMatrix(transponedMatrix);
+			ClearMatrix(addedMatrix);
+			ClearMatrix(finalMatrix);
+			ClearText(sum);
+			ClearText(sumFinal);
+			this.Refresh();
 		}
 	}
 }

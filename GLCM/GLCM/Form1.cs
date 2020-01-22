@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -32,7 +33,10 @@ namespace GLCM
 
         Button sum;
         Button sumFinal;
-		private string fileName;
+        Thread thread2;
+
+
+        private string fileName;
 
 		private double maxPixelValue = 255.0; 
 
@@ -42,10 +46,17 @@ namespace GLCM
 			startToolStripMenuItem.Enabled = false;
 			this.numberOfLevels = Convert.ToInt16(NoL.Value);
 			resolution = maxPixelValue / (this.numberOfLevels - 1);
+            comboBox1.SelectedIndex = 0;
+            thread2 = new Thread(initThread);
 
-		}
+        }
 
-		private void demoToolStripMenuItem_Click(object sender, EventArgs e)
+        void initThread()
+        {
+
+        }
+
+        private void demoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			fileName = "exampleMatrix.txt";
 			clearAll();
@@ -79,7 +90,8 @@ namespace GLCM
 				{
 					for (int j = 0; j < sizeY; j++)
 					{
-						this.Controls.Remove(matrix[i, j]);
+
+                        this.Invoke(new Action(() => Controls.Remove(matrix[i, j])));
 					}
 				}
 			}
@@ -89,7 +101,7 @@ namespace GLCM
 		{
 			if (text != null)
 			{
-				this.Controls.Remove(text);
+                this.Invoke(new Action(() => Controls.Remove(text)));
 			}
 		}
 
@@ -127,6 +139,7 @@ namespace GLCM
 
 		private void ConvertToLevels()
 		{
+            double tmpResolution = 0 ;
 			int sizeX = startMatrix.Count;
 			int sizeY = startMatrix[0].Count;
 			for (int i = 0; i < sizeX; i++)
@@ -134,8 +147,11 @@ namespace GLCM
 				for(int j = 0; j < sizeY; j++)
 				{
 					tabBtn[i, j].BackColor = Color.Gray;
-					tabBtn[i, j].Text = Convert.ToInt16((Convert.ToInt16(dataMatrix[i, j].Text) / this.resolution)).ToString();
-					this.Refresh();
+                    this.Invoke(new Action(() => tmpResolution = resolution));
+                    this.Invoke(new Action(() => tabBtn[i, j].Text = Convert.ToInt16((Convert.ToInt16(dataMatrix[i, j].Text) / tmpResolution)).ToString()));
+                    
+                    this.Invoke(new Action(() => Refresh()));
+                   // this.Refresh();
 					System.Threading.Thread.Sleep(dellay);
 					tabBtn[i, j].BackColor = Color.White;
 				}
@@ -174,8 +190,12 @@ namespace GLCM
                     matrix[i, j].Size = new Size(cellSize, cellSize);
                     matrix[i, j].Visible = true;
                     matrix[i, j].Text = "0";
-                    this.Controls.Add(matrix[i, j]);
-                    this.Refresh();
+
+                    this.Invoke(new Action(() => Controls.Add(matrix[i, j])));
+                    this.Invoke(new Action(() => Refresh()));
+                     
+                    //this.Controls.Add(matrix[i, j]);
+                    //this.Refresh();
                 }
             }
         }
@@ -196,7 +216,10 @@ namespace GLCM
             field.Size = new Size(cellSize * 2, cellSize);
             field.Visible = true;
             field.Text = text;
-            this.Controls.Add(field);
+            Button fieldTmp = field;
+            Invoke(new Action(() => Controls.Add(fieldTmp)));
+           // this.Controls.Add(field);
+
         }
 
 		/// <summary>
@@ -272,60 +295,7 @@ namespace GLCM
             return max + 1;
         }
 
-		/// <summary>
-		/// Counts all occurances in inputMatrix and sets those values in outputMatrix
-		/// </summary>
-		/// <param name="inputMatrix">Input Matrix</param>
-		/// <param name="outputMatrix">Output Matrix</param>
-		private void countOccurance(Button[,] inputMatrix, Button[,] outputMatrix)
-        {
-            for (int i = 0; i < MatrixSize; i++)
-            {
-                for (int j = 0; j < MatrixSize; j++)
-                { 
-                    outputMatrix[i, j].BackColor = Color.Gray;
-                    outputMatrix[i, j].Text = SearchForOccurance(inputMatrix, j, i).ToString();
-                   this.Refresh();
-                    System.Threading.Thread.Sleep(dellay);
-                    outputMatrix[i, j].BackColor = Color.White;
-                }
-            }
-           
-        }
-
-		/// <summary>
-		/// Searches for occurance in given matrix
-		/// </summary>
-		/// <param name="inputMatrix">The Matrix</param>
-		/// <param name="x">Occurance from values</param>
-		/// <param name="y">Occurance to values</param>
-		/// <returns>Total amound of occurances in given matrix</returns>
-		private int SearchForOccurance(Button[,] inputMatrix, int x, int y)
-        {
-            int count = 0;
-            Console.WriteLine("X=" + inputMatrix.GetLength(0) + " Y=" + inputMatrix.GetLength(1));
-
-            for (int i = 0; i < inputMatrix.GetLength(0)-1; i++)
-            {
-                for (int j = 0; j < inputMatrix.GetLength(1); j++)
-                {
-                    if (Convert.ToInt16(inputMatrix[i, j].Text) == x)
-                    {
-                        if (int.Parse(inputMatrix[i + 1, j].Text) == y)
-                        {
-                            count++;
-                            inputMatrix[i, j].BackColor = Color.Green;
-                            inputMatrix[i+1, j].BackColor = Color.Green;
-                            this.Refresh();
-                            System.Threading.Thread.Sleep(dellay);
-                            inputMatrix[i, j].BackColor = Color.White;
-                            inputMatrix[i+1, j].BackColor = Color.White;
-                        }
-                    }
-                }
-            }
-            return count;
-        }
+	
 
 		/// <summary>
 		/// Transpozes given matrix
@@ -339,15 +309,15 @@ namespace GLCM
                 for (int j = 0; j < MatrixSize; j++)
                 {
                     inputMatrix[j, i].BackColor = Color.Yellow;
-                    transponedMatrix[i, j].Text = inputMatrix[j, i].Text;
+                    this.Invoke(new Action(()=>transponedMatrix[i, j].Text = inputMatrix[j, i].Text));
                     transponedMatrix[i, j].BackColor = Color.Orange;
-                    this.Refresh();
+                    this.Invoke(new Action(() => Refresh()));
                     System.Threading.Thread.Sleep(dellay);
                     inputMatrix[j, i].BackColor = Color.White;
                     transponedMatrix[i, j].BackColor = Color.White;
-                    this.Refresh();
+                    this.Invoke(new Action(() => Refresh()));
                 }
-                this.Refresh();
+                this.Invoke(new Action(() => Refresh()));
                 System.Threading.Thread.Sleep(dellay);
             }
         }
@@ -371,13 +341,14 @@ namespace GLCM
                     input1[i, j].BackColor = Color.Yellow;
                     input2[i, j].BackColor = Color.Yellow;
                     output[i, j].BackColor = Color.Green;
-                    output[i, j].Text = (int.Parse(input1[i, j].Text) + int.Parse(input2[i, j].Text)).ToString();
-                    this.Refresh();
+                    //output[i, j].Text = (int.Parse(input1[i, j].Text) + int.Parse(input2[i, j].Text)).ToString();
+                    this.Invoke(new Action(() => output[i, j].Text = (int.Parse(input1[i, j].Text) + int.Parse(input2[i, j].Text)).ToString()));
+                    this.Invoke(new Action(() => Refresh()));
                     System.Threading.Thread.Sleep(dellay);
                     input1[i, j].BackColor = Color.White;
                     input2[i, j].BackColor = Color.White;
                     output[i, j].BackColor = Color.White;
-                    this.Refresh();
+                    this.Invoke(new Action(() => Refresh()));
                 }
             }
         }
@@ -395,13 +366,14 @@ namespace GLCM
                     input[i, j].BackColor = Color.Yellow;
                     output.BackColor = Color.Gray;
                     sum += int.Parse(input[i, j].Text);
-                    output.Text =  sum.ToString();
-                    this.Refresh();
+                    Button outputTmp = output;
+                     this.Invoke(new Action(() => outputTmp.Text =  sum.ToString()));
+                    this.Invoke(new Action(() => Refresh()));
                     System.Threading.Thread.Sleep(dellay);
 
                     input[i, j].BackColor = Color.White;
                     output.BackColor = Color.White;
-                    this.Refresh();
+                    this.Invoke(new Action(() => Refresh()));
                 }
             }
         }
@@ -415,7 +387,7 @@ namespace GLCM
             {
                 for (int j = 0; j < size; j++)
                 {
-                    output[i, j].Text = Math.Round((int.Parse(input[i, j].Text) / double.Parse(devider.Text)), 2).ToString();
+                    this.Invoke(new Action(() => output[i, j].Text = Math.Round((int.Parse(input[i, j].Text) / double.Parse(devider.Text)), 2).ToString()));
                     sum += double.Parse(output[i, j].Text);
                 }
             }
@@ -434,13 +406,14 @@ namespace GLCM
                     input[i, j].BackColor = Color.Yellow;
                     output.BackColor = Color.Gray;
                     sum += double.Parse(input[i, j].Text);
-                    output.Text = sum.ToString();
-                    this.Refresh();
+                    Button outputTmp = output;
+                    this.Invoke(new Action(() => outputTmp.Text = sum.ToString()));
+                    this.Invoke(new Action(() => Refresh()));
                     System.Threading.Thread.Sleep(dellay);
 
                     input[i, j].BackColor = Color.White;
                     output.BackColor = Color.White;
-                    this.Refresh();
+                    this.Invoke(new Action(() => Refresh()));
                 }
             }
         }
@@ -452,12 +425,27 @@ namespace GLCM
 
 		private void startToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			dellay = getDelay();
-			startToolStripMenuItem.Enabled = false;
-			demoToolStripMenuItem.Enabled = false;
-			openToolStripMenuItem.Enabled = false;
+            button1.Enabled = true;
+            button2.Enabled = false;
+            comboBox1.Enabled = false;
 
-			clearAll(false);
+            thread2 = new Thread(simulation);
+            
+            thread2.Start();
+
+		}
+
+        private void simulation()
+        {
+            dellay = getDelay();
+            menuStrip1.Invoke(new Action(() => startToolStripMenuItem.Enabled = false));
+            menuStrip1.Invoke(new Action(() => demoToolStripMenuItem.Enabled = false));
+            menuStrip1.Invoke(new Action(() => openToolStripMenuItem.Enabled = false));
+            //startToolStripMenuItem.Enabled = false;
+            //demoToolStripMenuItem.Enabled = false;
+            //openToolStripMenuItem.Enabled = false;
+
+            clearAll(false);
 
 			viewMatrix(tabBtn, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY, true);
 			ConvertToLevels();
@@ -477,11 +465,16 @@ namespace GLCM
 			viewText(ref sumFinal, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 2));
 			sumFinalCount(finalMatrix, ref sumFinal);
 
-			startToolStripMenuItem.Enabled = true;
-			demoToolStripMenuItem.Enabled = true;
-			openToolStripMenuItem.Enabled = true;
+            menuStrip1.Invoke(new Action(() => startToolStripMenuItem.Enabled = true));
+            menuStrip1.Invoke(new Action(() => demoToolStripMenuItem.Enabled = true));
+            menuStrip1.Invoke(new Action(() => openToolStripMenuItem.Enabled = true));
+            this.Invoke(new Action(() => comboBox1.Enabled = true));
+            thread2.Interrupt();
 
-		}
+   //         startToolStripMenuItem.Enabled = true;
+			//demoToolStripMenuItem.Enabled = true;
+			//openToolStripMenuItem.Enabled = true;
+        }
 
 		private void helpToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -500,7 +493,9 @@ namespace GLCM
 
 		private int getDelay()
 		{
-			var speed = speedBar.Value;
+            var speed = 0 ;
+            speedBar.Invoke(new Action(() =>  speed= speedBar.Value));
+            
 			return maxDellay - speed * minDellay * 10;
 		}
 
@@ -530,9 +525,191 @@ namespace GLCM
 			ClearMatrix(finalMatrix);
 			ClearText(sum);
 			ClearText(sumFinal);
-			this.Refresh();
+            this.Invoke(new Action(() => Refresh()));
+			//this.Refresh();
 		}
-	}
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            thread2.Suspend();
+            button1.Enabled = false;
+            button2.Enabled = true;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            thread2.Resume();
+            button1.Enabled = true;
+            button2.Enabled = false;
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {            
+            if (thread2.IsAlive)
+            {
+                thread2.Abort();
+            }                      
+        }
+
+
+        /// <summary>
+        /// Counts all occurances in inputMatrix and sets those values in outputMatrix
+        /// </summary>
+        /// <param name="inputMatrix">Input Matrix</param>
+        /// <param name="outputMatrix">Output Matrix</param>
+        private void countOccurance(Button[,] inputMatrix, Button[,] outputMatrix)
+        {
+            int switchTmp = 0;
+            this.Invoke(new Action(() => switchTmp = comboBox1.SelectedIndex));
+            for (int i = 0; i < MatrixSize; i++)
+            {
+                for (int j = 0; j < MatrixSize; j++)
+                {
+                    outputMatrix[i, j].BackColor = Color.Gray;
+                    switch(switchTmp)
+                    {
+                        case 0:
+                            this.Invoke(new Action(() => outputMatrix[i, j].Text = SearchForOccurance10(inputMatrix, j, i).ToString()));
+                            break;
+                        case 1:
+                            this.Invoke(new Action(() => outputMatrix[i, j].Text = SearchForOccurance01(inputMatrix, j, i).ToString()));
+                            break;
+                        case 2:
+                            this.Invoke(new Action(() => outputMatrix[i, j].Text = SearchForOccurance11(inputMatrix, j, i).ToString()));
+                            break;
+                        case 3:
+                            this.Invoke(new Action(() => outputMatrix[i, j].Text = SearchForOccurance1m1(inputMatrix, j, i).ToString()));
+                            break;
+                    }
+
+                    this.Invoke(new Action(() => Refresh()));
+                    System.Threading.Thread.Sleep(dellay);
+                    outputMatrix[i, j].BackColor = Color.White;
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Searches for occurance in given matrix
+        /// </summary>
+        /// <param name="inputMatrix">The Matrix</param>
+        /// <param name="x">Occurance from values</param>
+        /// <param name="y">Occurance to values</param>
+        /// <returns>Total amound of occurances in given matrix</returns>
+        private int SearchForOccurance01(Button[,] inputMatrix, int x, int y)
+        {
+            int count = 0;
+            Console.WriteLine("X=" + inputMatrix.GetLength(0) + " Y=" + inputMatrix.GetLength(1));
+
+            for (int i = 0; i < inputMatrix.GetLength(0) ; i++)
+            {
+                for (int j = 0; j < inputMatrix.GetLength(1) - 1; j++)
+                {
+                    if (Convert.ToInt16(inputMatrix[i, j].Text) == x)
+                    {
+                        if (int.Parse(inputMatrix[i , j + 1].Text) == y)
+                        {
+                            count++;
+                            inputMatrix[i, j].BackColor = Color.Green;
+                            inputMatrix[i, j+1].BackColor = Color.Green;
+                            this.Invoke(new Action(() => Refresh()));
+                            //this.Refresh();
+                            System.Threading.Thread.Sleep(dellay);
+                            inputMatrix[i, j].BackColor = Color.White;
+                            inputMatrix[i , j + 1].BackColor = Color.White;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+        private int SearchForOccurance10(Button[,] inputMatrix, int x, int y)
+        {
+            int count = 0;
+            Console.WriteLine("X=" + inputMatrix.GetLength(0) + " Y=" + inputMatrix.GetLength(1));
+
+            for (int i = 0; i < inputMatrix.GetLength(0) - 1; i++)
+            {
+                for (int j = 0; j < inputMatrix.GetLength(1); j++)
+                {
+                    if (Convert.ToInt16(inputMatrix[i, j].Text) == x)
+                    {
+                        if (int.Parse(inputMatrix[i + 1, j].Text) == y)
+                        {
+                            count++;
+                            inputMatrix[i, j].BackColor = Color.Green;
+                            inputMatrix[i + 1, j].BackColor = Color.Green;
+                            this.Invoke(new Action(() => Refresh()));
+                            //this.Refresh();
+                            System.Threading.Thread.Sleep(dellay);
+                            inputMatrix[i, j].BackColor = Color.White;
+                            inputMatrix[i + 1, j].BackColor = Color.White;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+        private int SearchForOccurance11(Button[,] inputMatrix, int x, int y)
+        {
+            int count = 0;
+            Console.WriteLine("X=" + inputMatrix.GetLength(0) + " Y=" + inputMatrix.GetLength(1));
+
+            for (int i = 0; i < inputMatrix.GetLength(0) - 1; i++)
+            {
+                for (int j = 0; j < inputMatrix.GetLength(1) - 1; j++)
+                {
+                    if (Convert.ToInt16(inputMatrix[i, j].Text) == x)
+                    {
+                        if (int.Parse(inputMatrix[i + 1, j + 1].Text) == y)
+                        {
+                            count++;
+                            inputMatrix[i, j].BackColor = Color.Green;
+                            inputMatrix[i + 1, j + 1].BackColor = Color.Green;
+                            this.Invoke(new Action(() => Refresh()));
+                            //this.Refresh();
+                            System.Threading.Thread.Sleep(dellay);
+                            inputMatrix[i, j].BackColor = Color.White;
+                            inputMatrix[i + 1, j + 1].BackColor = Color.White;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+        private int SearchForOccurance1m1(Button[,] inputMatrix, int x, int y)
+        {
+            int count = 0;
+            Console.WriteLine("X=" + inputMatrix.GetLength(0) + " Y=" + inputMatrix.GetLength(1));
+
+            for (int i = 1; i < inputMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < inputMatrix.GetLength(1) - 1; j++)
+                {
+                    if (Convert.ToInt16(inputMatrix[i, j].Text) == x)
+                    {
+                        if (int.Parse(inputMatrix[i - 1, j + 1].Text) == y)
+                        {
+                            count++;
+                            inputMatrix[i, j].BackColor = Color.Green;
+                            inputMatrix[i - 1, j + 1].BackColor = Color.Green;
+                            this.Invoke(new Action(() => Refresh()));
+                            //this.Refresh();
+                            System.Threading.Thread.Sleep(dellay);
+                            inputMatrix[i, j].BackColor = Color.White;
+                            inputMatrix[i - 1, j + 1].BackColor = Color.White;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+    }
 }
 
 

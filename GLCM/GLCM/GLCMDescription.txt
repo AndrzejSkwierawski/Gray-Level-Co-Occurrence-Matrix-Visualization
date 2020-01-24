@@ -1,0 +1,2 @@
+1. Wyznaczenie tablicy odcieni szarosci
+2. Wyznaczenie ilości przejść między pikselami

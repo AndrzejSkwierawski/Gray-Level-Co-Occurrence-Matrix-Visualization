@@ -18,18 +18,29 @@ namespace GLCM
 		private int minDellay = 3;
         private int dellay = 50;
         private int cellSize = 40;
-        private int startMatrixPosX = 50;
-        private int startMatrixPosY = 50;
+        
         private int MatrixSize;
 		private int numberOfLevels;
 		private double resolution;
 		List<List<int>> startMatrix = new List<List<int>>();
         Button[,] dataMatrix;
+        private int startMatrixPosX = 50;
+        private int startMatrixPosY = 100;
         Button[,] tabBtn;
-		Button[,] changeMatrix;
+        private int start2MatrixPosX = 50;
+        private int start2MatrixPosY = 100;
+        Button[,] changeMatrix;
+        private int changeMatrixPosX = 50;
+        private int changeMatrixPosY = 100;
         Button[,] transponedMatrix;
+        private int transponedMatrixPosX = 50;
+        private int transponedMatrixPosY = 100;
         Button[,] addedMatrix;
+        private int addedMatrixPosX = 50;
+        private int addedMatrixPosY = 100;
         Button[,] finalMatrix;
+        private int finalMatrixPosX = 50;
+        private int finalMatrixPosY = 100;
 
         Button sum;
         Button sumFinal;
@@ -58,7 +69,7 @@ namespace GLCM
 
         private void demoToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			fileName = "exampleMatrix.txt";
+			fileName = "exampleMatrix3.txt";
 			clearAll();
 			InitalizeMatrix(startMatrix);
 			Start();
@@ -142,9 +153,9 @@ namespace GLCM
             double tmpResolution = 0 ;
 			int sizeX = startMatrix.Count;
 			int sizeY = startMatrix[0].Count;
-			for (int i = 0; i < sizeX; i++)
+			for (int i = 0; i < sizeY; i++)
 			{
-				for(int j = 0; j < sizeY; j++)
+				for(int j = 0; j < sizeX; j++)
 				{
 					tabBtn[i, j].BackColor = Color.Gray;
                     this.Invoke(new Action(() => tmpResolution = resolution));
@@ -179,9 +190,9 @@ namespace GLCM
 				sizeX = this.numberOfLevels;
 				sizeY = sizeX;
 			}
-			for (int i = 0; i < sizeX; i++)
+			for (int i = 0; i < sizeY; i++)
             {
-                for (int j = 0; j < sizeY; j++)
+                for (int j = 0; j < sizeX; j++)
                 {
                     matrix[i, j] = new Button();
                     matrix[i, j].Enabled = false;
@@ -388,12 +399,11 @@ namespace GLCM
                 for (int j = 0; j < size; j++)
                 {
                     this.Invoke(new Action(() => output[i, j].Text = Math.Round((int.Parse(input[i, j].Text) / double.Parse(devider.Text)), 2).ToString()));
-                    sum += double.Parse(output[i, j].Text);
                 }
             }
         }
 
-        private void sumFinalCount(Button[,] input, ref Button output)
+        private void sumFinalCount(Button[,] input, Button[,] input2, ref Button output, Button devider)
         {
 			//int size = GetMaxValue(startMatrix);
 			int size = this.numberOfLevels;
@@ -405,9 +415,9 @@ namespace GLCM
                     System.Threading.Thread.Sleep(dellay);
                     input[i, j].BackColor = Color.Yellow;
                     output.BackColor = Color.Gray;
-                    sum += double.Parse(input[i, j].Text);
+                    sum += (Double.Parse(input2[i, j].Text) / double.Parse(devider.Text));
                     Button outputTmp = output;
-                    this.Invoke(new Action(() => outputTmp.Text = sum.ToString()));
+                    this.Invoke(new Action(() => outputTmp.Text = Math.Round(sum,2).ToString()));
                     this.Invoke(new Action(() => Refresh()));
                     System.Threading.Thread.Sleep(dellay);
 
@@ -427,7 +437,22 @@ namespace GLCM
 		{
             button1.Enabled = true;
             button2.Enabled = false;
+            button3.Enabled = true;
             comboBox1.Enabled = false;
+            NoL.Enabled = false;
+            Form.ActiveForm.Width = startMatrixPosX + 2 * cellSize * (startMatrix[0].Count + 1) +
+                2 * cellSize * (MatrixSize + 1) ;
+
+            if (MatrixSize * 2 + 3 < startMatrix.Count)
+            {
+                Form.ActiveForm.Height = startMatrixPosY + cellSize * (startMatrix.Count + 2);
+            }
+            else
+            {
+                Form.ActiveForm.Height = startMatrixPosY + cellSize * (MatrixSize + 1) +
+                cellSize * (MatrixSize + 4);
+            }
+           
 
             thread2 = new Thread(simulation);
             
@@ -441,39 +466,50 @@ namespace GLCM
             menuStrip1.Invoke(new Action(() => startToolStripMenuItem.Enabled = false));
             menuStrip1.Invoke(new Action(() => demoToolStripMenuItem.Enabled = false));
             menuStrip1.Invoke(new Action(() => openToolStripMenuItem.Enabled = false));
-            //startToolStripMenuItem.Enabled = false;
-            //demoToolStripMenuItem.Enabled = false;
-            //openToolStripMenuItem.Enabled = false;
-
+            this.Invoke(new Action(() => button3.Enabled = true));
             clearAll(false);
-
-			viewMatrix(tabBtn, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY, true);
+            
+            start2MatrixPosX = startMatrixPosX + cellSize * (startMatrix[0].Count + 1);
+            start2MatrixPosY = startMatrixPosY;
+            viewMatrix(tabBtn, start2MatrixPosX, start2MatrixPosY, true);
 			ConvertToLevels();
 
-			viewMatrix(changeMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY);
+            changeMatrixPosX = start2MatrixPosX + cellSize * (startMatrix[0].Count + 1);
+            changeMatrixPosY = startMatrixPosY;
+            viewMatrix(changeMatrix, changeMatrixPosX, changeMatrixPosY);
 			countOccurance(tabBtn, changeMatrix);
-			viewMatrix(transponedMatrix, startMatrixPosX + cellSize * (MatrixSize * 3 + 3), startMatrixPosY);
+
+            transponedMatrixPosX = changeMatrixPosX + cellSize * (MatrixSize + 1);
+            transponedMatrixPosY = changeMatrixPosY;
+            viewMatrix(transponedMatrix, transponedMatrixPosX, transponedMatrixPosY);
 			transpozeMatrix(changeMatrix, transponedMatrix);
-			viewMatrix(addedMatrix, startMatrixPosX + cellSize * (MatrixSize + 1), startMatrixPosY + cellSize * (MatrixSize + 1));
+
+            addedMatrixPosX = changeMatrixPosX;
+            addedMatrixPosY = changeMatrixPosY + cellSize * (MatrixSize + 1);
+            viewMatrix(addedMatrix, addedMatrixPosX, addedMatrixPosY);
 			sumMatrix(changeMatrix, transponedMatrix, addedMatrix);
 
-			viewText(ref sum, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 1));
+            viewText(ref sum, "0", addedMatrixPosX - cellSize, addedMatrixPosY + cellSize * MatrixSize );
 			sumCount(addedMatrix, ref sum);
-			viewMatrix(finalMatrix, startMatrixPosX + cellSize * (MatrixSize * 2 + 2), startMatrixPosY + cellSize * (MatrixSize + 1));
+
+            finalMatrixPosX = addedMatrixPosX + cellSize * (MatrixSize + 1);
+            finalMatrixPosY = addedMatrixPosY;
+            viewMatrix(finalMatrix, finalMatrixPosX, finalMatrixPosY);
 			devideMatrix(addedMatrix, sum, finalMatrix);
 
-			viewText(ref sumFinal, "0", startMatrixPosX + cellSize, startMatrixPosY + cellSize * (MatrixSize + 2));
-			sumFinalCount(finalMatrix, ref sumFinal);
+			viewText(ref sumFinal, "0", finalMatrixPosX - cellSize, finalMatrixPosY + cellSize * MatrixSize );
+            sumFinalCount(finalMatrix, addedMatrix, ref sumFinal, sum);
 
             menuStrip1.Invoke(new Action(() => startToolStripMenuItem.Enabled = true));
             menuStrip1.Invoke(new Action(() => demoToolStripMenuItem.Enabled = true));
             menuStrip1.Invoke(new Action(() => openToolStripMenuItem.Enabled = true));
             this.Invoke(new Action(() => comboBox1.Enabled = true));
+            this.Invoke(new Action(() => button1.Enabled = false));
+            this.Invoke(new Action(() => button2.Enabled = false));
+            this.Invoke(new Action(() => button3.Enabled = false));
+            this.Invoke(new Action(() => NoL.Enabled = true));
             thread2.Interrupt();
-
-   //         startToolStripMenuItem.Enabled = true;
-			//demoToolStripMenuItem.Enabled = true;
-			//openToolStripMenuItem.Enabled = true;
+            
         }
 
 		private void helpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -531,9 +567,12 @@ namespace GLCM
 
         private void button1_Click(object sender, EventArgs e)
         {
-            thread2.Suspend();
-            button1.Enabled = false;
-            button2.Enabled = true;
+            if(thread2.IsAlive)
+            {
+                thread2.Suspend();
+                button1.Enabled = false;
+                button2.Enabled = true;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -547,7 +586,15 @@ namespace GLCM
         {            
             if (thread2.IsAlive)
             {
-                thread2.Abort();
+                if(thread2.ThreadState+"" == "Suspended")
+                {
+                    thread2.Resume();
+                    thread2.Abort();
+                }
+                else
+                {
+                    thread2.Abort();
+                }
             }                      
         }
 
@@ -709,6 +756,66 @@ namespace GLCM
             return count;
         }
 
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (thread2.IsAlive)
+            {
+                if (thread2.ThreadState + "" == "Suspended")
+                {
+                    thread2.Resume();
+                    thread2.Abort();
+                    button1.Enabled = false;
+                    button2.Enabled = false;
+                    button3.Enabled = false;
+                    comboBox1.Enabled = true;
+                    NoL.Enabled = true;
+                    startToolStripMenuItem.Enabled = true;
+                    demoToolStripMenuItem.Enabled = true;
+                    openToolStripMenuItem.Enabled = true;
+
+
+                }
+                else
+                {
+                    thread2.Abort();
+                    button1.Enabled = false;
+                    button2.Enabled = false;
+                    button3.Enabled = false;
+                    comboBox1.Enabled = true;
+                    NoL.Enabled = true;
+                    startToolStripMenuItem.Enabled = true;
+                    demoToolStripMenuItem.Enabled = true;
+                    openToolStripMenuItem.Enabled = true;
+                }
+            }
+        }
+
+        private void aboutGLCMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string line ="";
+            string message = "";
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader("GLCMDescription.txt"))
+                {
+                    // Read the stream to a string, and write the string to the console.
+                    while (!sr.EndOfStream)
+                    {
+                        line = sr.ReadLine();
+                        message += line+"\n";
+                    }
+                }
+            }
+            catch (IOException ee)
+            {
+                Console.WriteLine("The file could not be read:");
+                Console.WriteLine(ee.Message);
+            }
+            const string caption = "Gray-Level Co-Occurrence Matrix";
+            var result = MessageBox.Show(message, caption,
+                                         MessageBoxButtons.OK,
+                                         MessageBoxIcon.Question);
+        }
     }
 }
 

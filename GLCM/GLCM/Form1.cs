@@ -59,7 +59,7 @@ namespace GLCM
 			resolution = maxPixelValue / (this.numberOfLevels - 1);
             comboBox1.SelectedIndex = 0;
             thread2 = new Thread(initThread);
-
+            labelStep.Text = "Wybierz plik z danymi obrazu oraz parametry symulacji.";
         }
 
         void initThread()
@@ -142,6 +142,7 @@ namespace GLCM
 					dataMatrix[i, j].Visible = true;
 					dataMatrix[i, j].Text = startMatrix[j][i].ToString();
                     this.Controls.Add(dataMatrix[i, j]);
+                    labelStep.Text = "Wczytano tablicę z danymi.";
                 }
             }
 			tabBtn = new Button[dataMatrix.GetLength(0), dataMatrix.GetLength(1)];
@@ -457,8 +458,9 @@ namespace GLCM
             thread2 = new Thread(simulation);
             
             thread2.Start();
+            labelStep.Text = "Rozpoczęto symulację.";
 
-		}
+        }
 
         private void simulation()
         {
@@ -468,36 +470,51 @@ namespace GLCM
             menuStrip1.Invoke(new Action(() => openToolStripMenuItem.Enabled = false));
             this.Invoke(new Action(() => button3.Enabled = true));
             clearAll(false);
+
+
+            this.Invoke(new Action(() => labelStep.Text = "Kwantyzacja danych obrazu do wybranej liczby poziomów szarości."));
             
             start2MatrixPosX = startMatrixPosX + cellSize * (startMatrix[0].Count + 1);
             start2MatrixPosY = startMatrixPosY;
             viewMatrix(tabBtn, start2MatrixPosX, start2MatrixPosY, true);
 			ConvertToLevels();
 
+            this.Invoke(new Action(() => labelStep.Text = "Tworzenie macierzy GLCM o rozmiarze równym liczbie poziomów szarości.\n"));
+            this.Invoke(new Action(() => labelStep.Text += "Definiujemy każdy element i, j GLCM jako liczbę przypadków, w których dwie próbki natężeń i j występują w określonej relacji przestrzennej."));
             changeMatrixPosX = start2MatrixPosX + cellSize * (startMatrix[0].Count + 1);
             changeMatrixPosY = startMatrixPosY;
             viewMatrix(changeMatrix, changeMatrixPosX, changeMatrixPosY);
 			countOccurance(tabBtn, changeMatrix);
 
+            this.Invoke(new Action(() => labelStep.Text = "Przekształcanie GLCM w macierz symetryczną.\n"));
+            this.Invoke(new Action(() => labelStep.Text += "Transponowanie GLCM.\n"));
             transponedMatrixPosX = changeMatrixPosX + cellSize * (MatrixSize + 1);
             transponedMatrixPosY = changeMatrixPosY;
             viewMatrix(transponedMatrix, transponedMatrixPosX, transponedMatrixPosY);
 			transpozeMatrix(changeMatrix, transponedMatrix);
 
+            this.Invoke(new Action(() => labelStep.Text = "Przekształcanie GLCM w macierz symetryczną.\n"));
+            this.Invoke(new Action(() => labelStep.Text += "Sumowanie GLCM i transponowanej GLCM.\n"));
             addedMatrixPosX = changeMatrixPosX;
             addedMatrixPosY = changeMatrixPosY + cellSize * (MatrixSize + 1);
             viewMatrix(addedMatrix, addedMatrixPosX, addedMatrixPosY);
 			sumMatrix(changeMatrix, transponedMatrix, addedMatrix);
 
+            this.Invoke(new Action(() => labelStep.Text = "Sumowanie elementów symetrycznej tablicy GLCM.\n"));
+            this.Invoke(new Action(() => labelStep.Text += "Suma powinna być równa dwókrotnosci wszystkich możliwych przypadków w których określona reacja występuje dla danych wejściowych.\n"));
             viewText(ref sum, "0", addedMatrixPosX - cellSize, addedMatrixPosY + cellSize * MatrixSize );
 			sumCount(addedMatrix, ref sum);
 
+            this.Invoke(new Action(() => labelStep.Text = "Normalizacja GLCM: \n"));
+            this.Invoke(new Action(() => labelStep.Text += "Każdy element dzielony przez sumę wszystkich elementów.\n"));
             finalMatrixPosX = addedMatrixPosX + cellSize * (MatrixSize + 1);
             finalMatrixPosY = addedMatrixPosY;
             viewMatrix(finalMatrix, finalMatrixPosX, finalMatrixPosY);
 			devideMatrix(addedMatrix, sum, finalMatrix);
 
-			viewText(ref sumFinal, "0", finalMatrixPosX - cellSize, finalMatrixPosY + cellSize * MatrixSize );
+            this.Invoke(new Action(() => labelStep.Text = "Sumowanie elementów znormalizowanej tablicy GLCM.\n"));
+            this.Invoke(new Action(() => labelStep.Text += "Suma powinna być równa 1.\n"));
+            viewText(ref sumFinal, "0", finalMatrixPosX - cellSize, finalMatrixPosY + cellSize * MatrixSize );
             sumFinalCount(finalMatrix, addedMatrix, ref sumFinal, sum);
 
             menuStrip1.Invoke(new Action(() => startToolStripMenuItem.Enabled = true));

@@ -28,11 +28,13 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.demoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutGLCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.speedBar = new System.Windows.Forms.TrackBar();
             this.Speed = new System.Windows.Forms.Label();
@@ -43,7 +45,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
-            this.aboutGLCMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.labelStep = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.speedBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NoL)).BeginInit();
@@ -93,13 +95,20 @@
             this.helpToolStripMenuItem.Text = "Help";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
+            // aboutGLCMToolStripMenuItem
+            // 
+            this.aboutGLCMToolStripMenuItem.Name = "aboutGLCMToolStripMenuItem";
+            this.aboutGLCMToolStripMenuItem.Size = new System.Drawing.Size(104, 24);
+            this.aboutGLCMToolStripMenuItem.Text = "About GLCM";
+            this.aboutGLCMToolStripMenuItem.Click += new System.EventHandler(this.aboutGLCMToolStripMenuItem_Click);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "exampleMatrix.txt";
             // 
             // speedBar
             // 
-            this.speedBar.Location = new System.Drawing.Point(450, 32);
+            this.speedBar.Location = new System.Drawing.Point(504, 32);
             this.speedBar.Margin = new System.Windows.Forms.Padding(4);
             this.speedBar.Maximum = 100;
             this.speedBar.Name = "speedBar";
@@ -112,7 +121,7 @@
             // Speed
             // 
             this.Speed.AutoSize = true;
-            this.Speed.Location = new System.Drawing.Point(400, 42);
+            this.Speed.Location = new System.Drawing.Point(443, 42);
             this.Speed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.Speed.Name = "Speed";
             this.Speed.Size = new System.Drawing.Size(53, 17);
@@ -175,7 +184,7 @@
             "(0,1)",
             "(1,1)",
             "(-1,1)"});
-            this.comboBox1.Location = new System.Drawing.Point(261, 62);
+            this.comboBox1.Location = new System.Drawing.Point(315, 35);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(121, 24);
             this.comboBox1.TabIndex = 10;
@@ -192,7 +201,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(258, 42);
+            this.label2.Location = new System.Drawing.Point(245, 42);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(64, 17);
             this.label2.TabIndex = 12;
@@ -209,18 +218,22 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // aboutGLCMToolStripMenuItem
+            // labelStep
             // 
-            this.aboutGLCMToolStripMenuItem.Name = "aboutGLCMToolStripMenuItem";
-            this.aboutGLCMToolStripMenuItem.Size = new System.Drawing.Size(104, 24);
-            this.aboutGLCMToolStripMenuItem.Text = "About GLCM";
-            this.aboutGLCMToolStripMenuItem.Click += new System.EventHandler(this.aboutGLCMToolStripMenuItem_Click);
+            this.labelStep.AutoSize = true;
+            this.labelStep.Location = new System.Drawing.Point(245, 78);
+            this.labelStep.MaximumSize = new System.Drawing.Size(800, 40);
+            this.labelStep.Name = "labelStep";
+            this.labelStep.Size = new System.Drawing.Size(800, 40);
+            this.labelStep.TabIndex = 14;
+            this.labelStep.Text = resources.GetString("labelStep.Text");
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1607, 706);
+            this.Controls.Add(this.labelStep);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -262,6 +275,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.ToolStripMenuItem aboutGLCMToolStripMenuItem;
+        private System.Windows.Forms.Label labelStep;
     }
 }
 

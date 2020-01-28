@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.demoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -222,11 +221,11 @@
             // 
             this.labelStep.AutoSize = true;
             this.labelStep.Location = new System.Drawing.Point(245, 78);
-            this.labelStep.MaximumSize = new System.Drawing.Size(800, 40);
+            this.labelStep.MaximumSize = new System.Drawing.Size(600, 80);
             this.labelStep.Name = "labelStep";
-            this.labelStep.Size = new System.Drawing.Size(800, 40);
+            this.labelStep.Size = new System.Drawing.Size(43, 17);
             this.labelStep.TabIndex = 14;
-            this.labelStep.Text = resources.GetString("labelStep.Text");
+            this.labelStep.Text = "Label";
             // 
             // Form1
             // 

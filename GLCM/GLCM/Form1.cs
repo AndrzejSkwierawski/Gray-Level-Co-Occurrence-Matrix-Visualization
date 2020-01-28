@@ -143,6 +143,9 @@ namespace GLCM
 					dataMatrix[i, j].Text = startMatrix[j][i].ToString();
                     this.Controls.Add(dataMatrix[i, j]);
                     labelStep.Text = "Wczytano tablicę z danymi.";
+                    Form.ActiveForm.Width = 600;
+                    Form.ActiveForm.Height = startMatrixPosY + cellSize * (startMatrix.Count + 2);
+
                 }
             }
 			tabBtn = new Button[dataMatrix.GetLength(0), dataMatrix.GetLength(1)];

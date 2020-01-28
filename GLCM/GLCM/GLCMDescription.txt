@@ -4,7 +4,7 @@
 	Macierz tworzona jest w następujący sposób:
 	Biorąc pod uwagę tylko próbki w macierzy wejściowej, zdefiniuj każdy element i, j GLCM jako liczbę przypadków, w których dwie próbki natężeń i i występują w określonej relacji przestrzennej (gdzie i i j są natężeniami między 0 a liczbą poziomów-1). 
 	Suma wszystkich elementów i, j GLCM będzie całkowitą liczbą przypadków, w których określona relacja przestrzenna występuje w macierzy wejściowej.
-	Przekształć macierz GLCM na symetryczną: Wykonaj transponowaną kopię GLCM, a nastepnie dodaj tę kopię do samego GLCM
+	Przekształcamy macierz GLCM na symetryczną: Wykonujemy transponowaną kopię GLCM, a nastepnie dodaj tę kopię do samego GLCM
 	Daje to macierz symetryczną, w której związek i do j jest nierozróżnialny dla związku j do i (dla dowolnych dwóch natężeń i i j). W konsekwencji suma wszystkich elementów i, j GLCM będzie teraz dwukrotnością całkowitej liczby przypadków, w których określona relacja przestrzenna występuje w  macierzy wejściowej (raz, gdy próbka o intensywności i jest próbką odniesienia i raz, gdy próbka o intensywności j jest próbką odniesienia), a dla każdego danego i suma wszystkich elementów i, j z danym i będzie całkowitą liczbą przypadków, w których próbka natężenia i pojawia się w określonym związku przestrzennym z inną próbką.
-	Normalizuj GLCM: Podziel każdy element przez sumę wszystkich elementów
+	Normalizujemy GLCM: Podziel każdy element przez sumę wszystkich elementów
 	Elementy GLCM można teraz uznać za prawdopodobieństwa znalezienia zależności i, j (lub j, i) w  macierzy wejściowej.
